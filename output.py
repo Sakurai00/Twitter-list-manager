@@ -17,13 +17,17 @@ def main():
 
     id = input("choose id:")
 
-    f = open(screen_name + '.csv', 'w', encoding='UTF-8', newline="")
+    list_name = api.get_list(list_id = id).name
+
+    f = open(screen_name + "_" + list_name + ".csv", "w+", encoding="UTF-8", newline="")
     writer = csv.writer(f)
 
     writer.writerow(["内部ID", "名前", "ID", "フォロー数", "フォロワー数", "URL", "bio"])
     for member in tweepy.Cursor(api.list_members, list_id=id).items():
         #print(member)
         writer.writerow([member.id, member.name, member.screen_name, member.friends_count, member.followers_count, member.url, member.description])
+
+    f.close()
 
 
 if __name__ == '__main__':
