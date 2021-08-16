@@ -13,6 +13,9 @@ from dotenv import load_dotenv
 """
 
 def create_token():
+    """ Twitter APIのアクセストークンを生成し，.envに保存する
+    """
+
     load_dotenv()
 
     CONSUMER_KEY = os.environ.get("TW_KEY")
@@ -41,6 +44,12 @@ def create_token():
 
 
 def generate_api():
+    """ Twitter APIを生成
+
+    Returns:
+        API: Twitter API
+    """
+
     load_dotenv()
 
     CONSUMER_KEY = os.environ.get("TW_KEY")
