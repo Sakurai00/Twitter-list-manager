@@ -36,7 +36,6 @@ def create_list(list_name, mode):
 
 
 def main():
-    api_user = api.me()
     print("API User: {}".format(api.me().screen_name))
 
     #screen_name = input("screen_name:")
