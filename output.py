@@ -8,7 +8,16 @@ from twapi import generate_api
 api = generate_api()
 
 
-def get_list_id(screen_name):
+def get_list_id(screen_name) -> int:
+    """ あるユーザのリストを列挙し，指定したリストIDを返す
+
+    Args:
+        screen_name (String): User's screen_name
+
+    Returns:
+        int: List ID
+    """
+
     lists = api.lists_all(screen_name = screen_name)
     for list in lists:
         print(list.id, list.name)
@@ -17,6 +26,12 @@ def get_list_id(screen_name):
 
 
 def list_member_to_csv(list_id):
+    """ 指定されたリストIDのメンバをCSVファイルに出力する
+
+    Args:
+        list_id (int): List ID
+    """
+
     name = api.get_list(list_id = list_id).full_name.split('/')
 
     file_name = '{}_{}.csv'.format(name[0], name[1])
@@ -30,7 +45,17 @@ def list_member_to_csv(list_id):
     f.close()
 
 
-def create_list(list_name, mode):
+def create_list(list_name, mode) -> int:
+    """ 指定された名前のリストを作成する
+
+    Args:
+        list_name (String): List name
+        mode (String): private or public
+
+    Returns:
+        int: List ID
+    """
+
     list = api.create_list(list_name, mode = mode)
     return list.id
 
