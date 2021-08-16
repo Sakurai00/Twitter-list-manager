@@ -30,6 +30,11 @@ def list_member_to_csv(list_id):
     f.close()
 
 
+def create_list(list_name, mode):
+    list = api.create_list(list_name, mode = mode)
+    return list.id
+
+
 def main():
     #screen_name = input("screen_name:")
     screen_name = 'Sakurai_Absol'
