@@ -48,7 +48,7 @@ def list_member_to_csv(list_id):
 def csv_output():
     #screen_name = input("screen_name:")
     screen_name = 'Sakurai_Absol'
-    mode = input("mode(0:all, 1:single):")
+    mode = int(input("mode(0:all, 1:single):"))
 
     if mode == 0:
         lists = api.lists_all(screen_name = screen_name)
