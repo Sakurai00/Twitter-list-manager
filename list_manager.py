@@ -43,6 +43,7 @@ def list_member_to_csv(list_id):
     for member in tweepy.Cursor(api.list_members, list_id = list_id).items():
         writer.writerow([member.id, member.name, member.screen_name, member.friends_count, member.followers_count, member.url, member.description])
     f.close()
+    print("{} is created.".format(file_name))
 
 
 def csv_output():
