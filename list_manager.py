@@ -45,6 +45,20 @@ def list_member_to_csv(list_id):
     f.close()
 
 
+def csv_output():
+    #screen_name = input("screen_name:")
+    screen_name = 'Sakurai_Absol'
+    mode = input("mode(0:all, 1:single):")
+
+    if mode == 0:
+        lists = api.lists_all(screen_name = screen_name)
+        for list in lists:
+            list_member_to_csv(list.id)
+    elif mode == 1:
+        list_id = get_list_id(screen_name)
+        list_member_to_csv(list_id)
+
+
 def create_list(list_name, mode) -> int:
     """ 指定された名前のリストを作成する
 
@@ -63,12 +77,7 @@ def create_list(list_name, mode) -> int:
 def main():
     print("API User: {}".format(api.me().screen_name))
 
-    #screen_name = input("screen_name:")
-    screen_name = 'Sakurai_Absol'
-
-    list_id = get_list_id(screen_name)
-
-    list_member_to_csv(list_id)
+    csv_output()
 
 
 if __name__ == '__main__':
