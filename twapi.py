@@ -49,7 +49,6 @@ def generate_api():
     Returns:
         API: Twitter API
     """
-
     load_dotenv()
 
     CONSUMER_KEY = os.environ.get("TW_KEY")
