@@ -1,6 +1,8 @@
 import csv
+import itertools
 
 import tweepy
+import pandas as pd
 
 from twapi import generate_api
 
@@ -78,10 +80,41 @@ def create_list(list_name, mode) -> int:
     return list.id
 
 
+def csv_to_list(list_id, file_name):
+    """ CSVファイルのメンバをリストに追加する
+
+    Args:
+        list_id (int): List ID
+        file_name (String): CSV file name
+    """
+
+    df = pd.read_csv(file_name, encoding="UTF-8", header = 0, chunksize = 100, usecols = [0])
+    for chunk in df:
+        id_list = chunk.to_numpy().tolist()
+        id_list = list(itertools.chain.from_iterable(id_list))
+        api.add_list_members(list_id = list_id, user_id = id_list)
+    print("{} OK".format(file_name))
+
+
+def make_list_from_csv():
+
+    temp = int(input("List ID (0:Create new list):"))
+
+    if temp == 0:
+        list_name = input("List name:")
+        mode = input("Mode(public or private):")
+        list_id = create_list(list_name, mode)
+    else:
+        list_id = temp
+
+    file_name = input("Input CSV file name:")
+    csv_to_list(list_id, file_name)
+
 def main():
     print("API User: {}".format(api.me().screen_name))
 
-    csv_output()
+    #csv_output()
+    make_list_from_csv()
 
 
 if __name__ == '__main__':
