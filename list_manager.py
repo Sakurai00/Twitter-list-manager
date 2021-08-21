@@ -1,11 +1,10 @@
 import csv
 import itertools
 
-import tweepy
 import pandas as pd
+import tweepy
 
 from twapi import generate_api
-
 
 api = generate_api()
 
@@ -23,11 +22,25 @@ def get_list_id(screen_name) -> int:
     lists = api.lists_all(screen_name = screen_name)
     for list in lists:
         print(list.id, list.name)
-    id = input("list id:")
+    id = input("List ID:")
     return id
 
 
-def list_member_to_csv(list_id):
+def create_list() -> int:
+    """ 指定された名前のリストを作成する
+
+    Returns:
+        int: List ID
+    """
+
+    list_name = input("List name:")
+    mode = input("Mode(public or private):")
+
+    list = api.create_list(list_name = list_name, mode = mode)
+    return list.id
+
+
+def list_to_csv(list_id):
     """ 指定されたリストIDのメンバをCSVファイルに出力する
 
     Args:
@@ -35,7 +48,6 @@ def list_member_to_csv(list_id):
     """
 
     name = api.get_list(list_id = list_id).full_name.split('/')
-
     file_name = '{}_{}.csv'.format(name[0], name[1])
 
     f = open(file_name, "w+", encoding="UTF-8", newline="")
@@ -46,38 +58,6 @@ def list_member_to_csv(list_id):
         writer.writerow([member.id, member.name, member.screen_name, member.friends_count, member.followers_count, member.url, member.description])
     f.close()
     print("{} is created.".format(file_name))
-
-
-def csv_output():
-    """ リストメンバをCSVファイルに出力する
-    """
-
-    #screen_name = input("screen_name:")
-    screen_name = "Sakurai_Absol"
-    mode = int(input("mode(0:all, 1:single):"))
-
-    if mode == 0:
-        lists = api.lists_all(screen_name = screen_name)
-        for list in lists:
-            list_member_to_csv(list.id)
-    elif mode == 1:
-        list_id = get_list_id(screen_name)
-        list_member_to_csv(list_id)
-
-
-def create_list(list_name, mode) -> int:
-    """ 指定された名前のリストを作成する
-
-    Args:
-        list_name (String): List name
-        mode (String): private or public
-
-    Returns:
-        int: List ID
-    """
-
-    list = api.create_list(list_name, mode = mode)
-    return list.id
 
 
 def csv_to_list(list_id, file_name):
@@ -96,25 +76,50 @@ def csv_to_list(list_id, file_name):
     print("{} OK".format(file_name))
 
 
+# ====== ====== ======
+
+def make_csv_from_list():
+    """ リストメンバをCSVファイルに出力する
+    """
+
+    screen_name = input("Screen name:")
+    mode = int(input("Mode(0:all, 1:single):"))
+
+    if mode == 0:
+        lists = api.lists_all(screen_name = screen_name)
+        for list in lists:
+            list_to_csv(list.id)
+    elif mode == 1:
+        list_id = get_list_id(screen_name)
+        list_to_csv(list_id)
+
+
 def make_list_from_csv():
+    """ CSVファイルのメンバをリストに追加する
+    """
 
     temp = int(input("List ID (0:Create new list):"))
 
     if temp == 0:
-        list_name = input("List name:")
-        mode = input("Mode(public or private):")
-        list_id = create_list(list_name, mode)
+        list_id = create_list()
     else:
         list_id = temp
 
-    file_name = input("Input CSV file name:")
+    file_name = input("CSV file name:")
     csv_to_list(list_id, file_name)
+
 
 def main():
     print("API User: {}".format(api.me().screen_name))
+    print("Menu\n\
+        0: list -> csv\n\
+        1: csv -> list")
+    menu_id = int(input("Menu ID:"))
 
-    #csv_output()
-    make_list_from_csv()
+    if menu_id == 0:
+        make_csv_from_list()
+    elif menu_id == 1:
+        make_list_from_csv()
 
 
 if __name__ == '__main__':
