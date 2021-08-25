@@ -124,5 +124,4 @@ def main():
 
 
 if __name__ == '__main__':
-    #main()
-    list_to_csv(1233306844266823680)
+    main()
