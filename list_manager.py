@@ -50,13 +50,14 @@ def list_to_csv(list_id):
     name = api.get_list(list_id = list_id).full_name.split('/')
     file_name = '{}_{}.csv'.format(name[0], name[1])
 
-    f = open(file_name, "w+", encoding="UTF-8", newline="")
-    writer = csv.writer(f)
+    user_list = [["内部ID", "名前", "ID", "フォロー数", "フォロワー数", "URL", "bio"]]
 
-    writer.writerow(["内部ID", "名前", "ID", "フォロー数", "フォロワー数", "URL", "bio"])
     for member in tweepy.Cursor(api.list_members, list_id = list_id).items():
-        writer.writerow([member.id, member.name, member.screen_name, member.friends_count, member.followers_count, member.url, member.description])
-    f.close()
+        user_list.append([member.id, member.name, member.screen_name, member.friends_count, member.followers_count, member.url, member.description])
+
+    df = pd.DataFrame(user_list)
+    df.to_csv(file_name, header = False, index=False, encoding="UTF-8")
+
     print("{} is created.".format(file_name))
 
 
@@ -123,4 +124,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    #main()
+    list_to_csv(1233306844266823680)
