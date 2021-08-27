@@ -1,4 +1,3 @@
-import csv
 import itertools
 
 import pandas as pd
