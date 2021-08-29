@@ -19,8 +19,8 @@ def get_list_id(screen_name) -> int:
     """
 
     lists = api.lists_all(screen_name = screen_name)
-    for list in lists:
-        print(list.id, list.name)
+    for l in lists:
+        print(l.id, l.name)
     id = input("List ID:")
     return id
 
@@ -34,8 +34,9 @@ def create_list() -> int:
 
     list_name = input("List name:")
     mode = input("Mode(public or private):")
-    list_temp = api.create_list(list_name = list_name, mode = mode)
-    return list_temp.id
+
+    l = api.create_list(list_name = list_name, mode = mode)
+    return l.id
 
 
 def user_lookup(id_list) -> list:
@@ -50,8 +51,8 @@ def user_lookup(id_list) -> list:
 
     user_list = [["id", "name", "screen_name", "friends", "followers", "url", "description"]]
     for i in range(0, len(id_list), 100):
-        for member in api.lookup_users(user_ids = id_list[i:i+100]):
-            user_list.append([member.id, member.name, member.screen_name, member.friends_count, member.followers_count, member.url, member.description])
+        for user in api.lookup_users(user_ids = id_list[i:i+100]):
+            user_list.append([user.id, user.name, user.screen_name, user.friends_count, user.followers_count, user.url, user.description])
     return user_list
 
 
@@ -67,11 +68,11 @@ def list_to_csv(list_id):
 
     user_list = [["id", "name", "screen_name", "friends", "followers", "url", "description"]]
 
-    for member in tweepy.Cursor(api.list_members, list_id = list_id).items():
-        user_list.append([member.id, member.name, member.screen_name, member.friends_count, member.followers_count, member.url, member.description])
+    for user in tweepy.Cursor(api.list_members, list_id = list_id).items():
+        user_list.append([user.id, user.name, user.screen_name, user.friends_count, user.followers_count, user.url, user.description])
 
     df = pd.DataFrame(user_list)
-    df.to_csv(file_name, header = False, index = False, encoding="UTF-8")
+    df.to_csv(file_name, header = False, index = False, encoding = "UTF-8")
 
     print("{} is created.".format(file_name))
 
@@ -88,8 +89,8 @@ def make_csv_from_list():
 
     if mode == 0:
         lists = api.lists_all(screen_name = screen_name)
-        for list in lists:
-            list_to_csv(list.id)
+        for l in lists:
+            list_to_csv(l.id)
     elif mode == 1:
         list_id = get_list_id(screen_name)
         list_to_csv(list_id)
@@ -109,7 +110,7 @@ def make_list_from_csv():
 
     file_name = input("CSV file name:")
 
-    df = pd.read_csv(file_name, encoding="UTF-8", header = 0, chunksize = 100, usecols = [0])
+    df = pd.read_csv(file_name, encoding = "UTF-8", header = 0, chunksize = 100, usecols = [0])
     for chunk in df:
         id_list = chunk.to_numpy().tolist()
         id_list = list(itertools.chain.from_iterable(id_list))
@@ -127,19 +128,19 @@ def make_csv_from_follow():
 
 
     file_name = '{}_follow.csv'.format(screen_name)
-    id_temp = []
+    id_list = []
 
     for member in tweepy.Cursor(api.friends_ids, screen_name = screen_name).items():
-        id_temp.append(member)
+        id_list.append(member)
 
     if mode == 0:
         user_list = ["id"]
-        user_list += id_temp
+        user_list += id_list
     elif mode == 1:
-        user_list = user_lookup(id_temp)
+        user_list = user_lookup(id_list)
 
     df = pd.DataFrame(user_list)
-    df.to_csv(file_name, header = False, index = False, encoding="UTF-8")
+    df.to_csv(file_name, header = False, index = False, encoding = "UTF-8")
 
     print("{} is created.".format(file_name))
 
