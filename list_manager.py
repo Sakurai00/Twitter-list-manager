@@ -35,7 +35,7 @@ def create_list() -> int:
     list_name = input("List name:")
     mode = input("Mode(public or private):")
 
-    l = api.create_list(list_name = list_name, mode = mode)
+    l = api.create_list(name = list_name, mode = mode)
     return l.id
 
 
