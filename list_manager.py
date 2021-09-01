@@ -145,13 +145,30 @@ def make_csv_from_follow():
     print("{} is created.".format(file_name))
 
 
+def diff_of_csv():
+    """ 与えられたCSVファイル1と2の差分を出力する
+    """
+
+    file_name_1 = input("File name 1:")
+    file_name_2 = input("File name 2:")
+
+
+    new_file_name = '{}_{}.csv'.format(file_name_1[:-4], file_name_2[:-4])
+    df1 = pd.read_csv(file_name_1, encoding = "UTF-8", header = 0)
+    df2 = pd.read_csv(file_name_2, encoding = "UTF-8", header = 0)
+    df3 = df1[~df1.id.isin(df2.id)]
+    df3.to_csv(new_file_name, header = False, index = False, encoding = "UTF-8")
+
+    print("{} is created.".format(new_file_name))
+
 
 def main():
     print("API User: {}".format(api.me().screen_name))
     print("Menu\n\
         0: list -> csv\n\
         1: csv -> list\n\
-        2: follow -> csv")
+        2: follow -> csv\n\
+        3: diff of csv")
     menu_id = int(input("Menu ID:"))
 
     if menu_id == 0:
@@ -160,6 +177,8 @@ def main():
         make_list_from_csv()
     elif menu_id == 2:
         make_csv_from_follow()
+    elif menu_id == 3:
+        diff_of_csv()
 
 
 
