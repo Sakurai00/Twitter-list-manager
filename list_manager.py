@@ -35,6 +35,7 @@ def create_list() -> int:
     list_name = input("List name:")
     mode = input("Mode(public or private):")
 
+
     l = api.create_list(name = list_name, mode = mode)
     return l.id
 
@@ -66,6 +67,7 @@ def list_to_csv(list_id):
     name = api.get_list(list_id = list_id).full_name.split('/')
     file_name = '{}_{}.csv'.format(name[0], name[1])
 
+
     user_list = [["id", "name", "screen_name", "friends", "followers", "url", "description"]]
 
     for user in tweepy.Cursor(api.list_members, list_id = list_id).items():
@@ -87,6 +89,7 @@ def make_csv_from_list():
     screen_name = input("Screen name:")
     mode = int(input("Mode (0:All, 1:Single):"))
 
+
     if mode == 0:
         lists = api.lists_all(screen_name = screen_name)
         for l in lists:
@@ -101,6 +104,7 @@ def make_list_from_csv():
     """
 
     mode = int(input("Mode (0:Create new list, 1:List up):"))
+
 
     if mode == 0:
         list_id = create_list()
