@@ -25,16 +25,12 @@ def get_list_id(screen_name) -> int:
     return id
 
 
-def create_list() -> int:
+def create_list(list_name, mode) -> int:
     """ 指定された名前のリストを作成する
 
     Returns:
         int: List ID
     """
-
-    list_name = input("List name:")
-    mode = input("Mode(public or private):")
-
 
     l = api.create_list(name = list_name, mode = mode)
     return l.id
@@ -82,13 +78,9 @@ def list_to_csv(list_id):
 
 # ====== ====== ======
 
-def make_csv_from_list():
+def make_csv_from_list(screen_name, mode):
     """ リストメンバをCSVファイルに出力する
     """
-
-    screen_name = input("Screen name:")
-    mode = int(input("Mode (0:All, 1:Single):"))
-
 
     if mode == 0:
         lists = api.lists_all(screen_name = screen_name)
@@ -99,20 +91,9 @@ def make_csv_from_list():
         list_to_csv(list_id)
 
 
-def make_list_from_csv():
+def make_list_from_csv(list_id, file_name):
     """ CSVファイルのメンバをリストに追加する
     """
-
-    mode = int(input("Mode (0:Create new list, 1:List up):"))
-
-
-    if mode == 0:
-        list_id = create_list()
-    elif mode == 1:
-        screen_name = input("Screen name:")
-        list_id = get_list_id(screen_name)
-
-    file_name = input("CSV file name:")
 
     df = pd.read_csv(file_name, encoding = "UTF-8", header = 0, chunksize = 100, usecols = [0])
     for chunk in df:
@@ -123,13 +104,9 @@ def make_list_from_csv():
     print("{} OK".format(file_name))
 
 
-def make_csv_from_follow():
+def make_csv_from_follow(screen_name, mode):
     """ フォローしているユーザをCSVファイルに出力する
     """
-
-    screen_name = input("Screen name:")
-    mode = int(input("Mode (0:Simple, 1:More info):"))
-
 
     file_name = '{}_follow.csv'.format(screen_name)
     id_list = []
@@ -149,17 +126,13 @@ def make_csv_from_follow():
     print("{} is created.".format(file_name))
 
 
-def diff_of_csv():
+def diff_of_csv(file_name1, file_name2):
     """ 与えられたCSVファイル1と2の差分を出力する
     """
 
-    file_name_1 = input("File name 1:")
-    file_name_2 = input("File name 2:")
-
-
-    new_file_name = '{}_{}.csv'.format(file_name_1[:-4], file_name_2[:-4])
-    df1 = pd.read_csv(file_name_1, encoding = "UTF-8", header = 0)
-    df2 = pd.read_csv(file_name_2, encoding = "UTF-8", header = 0)
+    new_file_name = '{}_{}.csv'.format(file_name1[:-4], file_name2[:-4])
+    df1 = pd.read_csv(file_name1, encoding = "UTF-8", header = 0)
+    df2 = pd.read_csv(file_name2, encoding = "UTF-8", header = 0)
     df3 = df1[~df1.id.isin(df2.id)]
     df3.to_csv(new_file_name, header = False, index = False, encoding = "UTF-8")
 
@@ -178,15 +151,25 @@ def main():
     menu_id = int(input("Menu ID:"))
 
     if menu_id == 0:
-        make_csv_from_list()
+        screen_name = input("Screen name:")
+        mode = int(input("Mode (0:All, 1:Single):"))
+        make_csv_from_list(screen_name, mode)
     elif menu_id == 1:
-        make_list_from_csv()
+        list_id = input("List ID:")
+        file_name = input("CSV file name:")
+        make_list_from_csv(list_id, file_name)
     elif menu_id == 2:
-        make_csv_from_follow()
+        screen_name = input("Screen name:")
+        mode = int(input("Mode (0:Simple, 1:More info):"))
+        make_csv_from_follow(screen_name, mode)
     elif menu_id == 3:
-        diff_of_csv()
+        file_name1 = input("File name 1:")
+        file_name2 = input("File name 2:")
+        diff_of_csv(file_name1, file_name2)
     elif menu_id == 4:
-        list_id = create_list()
+        list_name = input("List name:")
+        mode = input("Mode(public or private):")
+        list_id = create_list(list_name, mode)
         print("List ID:" + list_id)
     elif menu_id == 5:
         screen_name = input("Screen name:")
