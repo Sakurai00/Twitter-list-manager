@@ -35,6 +35,7 @@ def create_list() -> int:
     list_name = input("List name:")
     mode = input("Mode(public or private):")
 
+
     l = api.create_list(name = list_name, mode = mode)
     return l.id
 
@@ -66,6 +67,7 @@ def list_to_csv(list_id):
     name = api.get_list(list_id = list_id).full_name.split('/')
     file_name = '{}_{}.csv'.format(name[0], name[1])
 
+
     user_list = [["id", "name", "screen_name", "friends", "followers", "url", "description"]]
 
     for user in tweepy.Cursor(api.list_members, list_id = list_id).items():
@@ -87,6 +89,7 @@ def make_csv_from_list():
     screen_name = input("Screen name:")
     mode = int(input("Mode (0:All, 1:Single):"))
 
+
     if mode == 0:
         lists = api.lists_all(screen_name = screen_name)
         for l in lists:
@@ -101,6 +104,7 @@ def make_list_from_csv():
     """
 
     mode = int(input("Mode (0:Create new list, 1:List up):"))
+
 
     if mode == 0:
         list_id = create_list()
@@ -145,13 +149,30 @@ def make_csv_from_follow():
     print("{} is created.".format(file_name))
 
 
+def diff_of_csv():
+    """ 与えられたCSVファイル1と2の差分を出力する
+    """
+
+    file_name_1 = input("File name 1:")
+    file_name_2 = input("File name 2:")
+
+
+    new_file_name = '{}_{}.csv'.format(file_name_1[:-4], file_name_2[:-4])
+    df1 = pd.read_csv(file_name_1, encoding = "UTF-8", header = 0)
+    df2 = pd.read_csv(file_name_2, encoding = "UTF-8", header = 0)
+    df3 = df1[~df1.id.isin(df2.id)]
+    df3.to_csv(new_file_name, header = False, index = False, encoding = "UTF-8")
+
+    print("{} is created.".format(new_file_name))
+
 
 def main():
     print("API User: {}".format(api.me().screen_name))
     print("Menu\n\
         0: list -> csv\n\
         1: csv -> list\n\
-        2: follow -> csv")
+        2: follow -> csv\n\
+        3: diff of csv")
     menu_id = int(input("Menu ID:"))
 
     if menu_id == 0:
@@ -160,6 +181,8 @@ def main():
         make_list_from_csv()
     elif menu_id == 2:
         make_csv_from_follow()
+    elif menu_id == 3:
+        diff_of_csv()
 
 
 
