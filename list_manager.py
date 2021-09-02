@@ -21,7 +21,7 @@ def get_list_id(screen_name: str) -> int:
     lists = api.lists_all(screen_name = screen_name)
     for l in lists:
         print(l.id, l.name)
-    id = input("List ID:")
+    id = int(input("List ID:"))
     return id
 
 
@@ -193,11 +193,11 @@ def main() -> None:
         list_name = input("List name:")
         mode = input("Mode(public or private):")
         list_id = create_list(list_name, mode)
-        print("List ID:" + list_id)
+        print("List ID: {}".format(list_id))
     elif menu_id == 5:
         screen_name = input("Screen name:")
         list_id = get_list_id(screen_name)
-        print("List ID:" + list_id)
+        print("List ID: {}".format(list_id))
 
 
 if __name__ == '__main__':
