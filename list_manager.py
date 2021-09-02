@@ -172,7 +172,9 @@ def main():
         0: list -> csv\n\
         1: csv -> list\n\
         2: follow -> csv\n\
-        3: diff of csv")
+        3: diff of csv\n\
+        4: create list\n\
+        5: list up Lists")
     menu_id = int(input("Menu ID:"))
 
     if menu_id == 0:
@@ -183,6 +185,13 @@ def main():
         make_csv_from_follow()
     elif menu_id == 3:
         diff_of_csv()
+    elif menu_id == 4:
+        list_id = create_list()
+        print("List ID:" + list_id)
+    elif menu_id == 5:
+        screen_name = input("Screen name:")
+        list_id = get_list_id(screen_name)
+        print("List ID:" + list_id)
 
 
 
