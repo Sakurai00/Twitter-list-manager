@@ -8,11 +8,11 @@ from twapi import generate_api
 api = generate_api()
 
 
-def get_list_id(screen_name) -> int:
+def get_list_id(screen_name: str) -> int:
     """ あるユーザのリストを列挙し，指定したリストIDを返す
 
     Args:
-        screen_name (String): User's screen_name
+        screen_name (str): Screen_name
 
     Returns:
         int: List ID
@@ -25,8 +25,12 @@ def get_list_id(screen_name) -> int:
     return id
 
 
-def create_list(list_name, mode) -> int:
-    """ 指定された名前のリストを作成する
+def create_list(list_name: str, mode: str) -> int:
+    """ リストを作成する
+
+    Args:
+        list_name (str): List name
+        mode (str): "pubric", "private"
 
     Returns:
         int: List ID
@@ -36,7 +40,7 @@ def create_list(list_name, mode) -> int:
     return l.id
 
 
-def user_lookup(id_list) -> list:
+def user_lookup(id_list: list) -> list:
     """ ユーザIDを元にユーザの情報を取得する
 
     Args:
@@ -53,7 +57,7 @@ def user_lookup(id_list) -> list:
     return user_list
 
 
-def list_to_csv(list_id):
+def list_to_csv(list_id: int) -> None:
     """ 指定されたリストIDのメンバをCSVファイルに出力する
 
     Args:
@@ -78,8 +82,12 @@ def list_to_csv(list_id):
 
 # ====== ====== ======
 
-def make_csv_from_list(screen_name, mode):
-    """ リストメンバをCSVファイルに出力する
+def make_csv_from_list(screen_name: str, mode: int) -> None:
+    """ リストのメンバをCSVファイルに出力する
+
+    Args:
+        screen_name (str): Screen name
+        mode (int): 0: All, 1: Single
     """
 
     if mode == 0:
@@ -91,8 +99,12 @@ def make_csv_from_list(screen_name, mode):
         list_to_csv(list_id)
 
 
-def make_list_from_csv(list_id, file_name):
-    """ CSVファイルのメンバをリストに追加する
+def make_list_from_csv(list_id: int, file_name: str):
+    """ CSVファイルを読み込んでリストを作成する
+
+    Args:
+        list_id (int): List ID
+        file_name (str): CSV file name
     """
 
     df = pd.read_csv(file_name, encoding = "UTF-8", header = 0, chunksize = 100, usecols = [0])
@@ -104,8 +116,12 @@ def make_list_from_csv(list_id, file_name):
     print("{} OK".format(file_name))
 
 
-def make_csv_from_follow(screen_name, mode):
+def make_csv_from_follow(screen_name: str, mode: int) -> None:
     """ フォローしているユーザをCSVファイルに出力する
+
+    Args:
+        screen_name (str): Screen name
+        mode (int): 0: Simple, 1: All
     """
 
     file_name = '{}_follow.csv'.format(screen_name)
@@ -126,8 +142,12 @@ def make_csv_from_follow(screen_name, mode):
     print("{} is created.".format(file_name))
 
 
-def diff_of_csv(file_name1, file_name2):
+def diff_of_csv(file_name1: str, file_name2: str) -> None:
     """ 与えられたCSVファイル1と2の差分を出力する
+
+    Args:
+        file_name1 (str): CSV file name (base)
+        file_name2 (str): CSV file name (compare)
     """
 
     new_file_name = '{}_{}.csv'.format(file_name1[:-4], file_name2[:-4])
@@ -139,7 +159,10 @@ def diff_of_csv(file_name1, file_name2):
     print("{} is created.".format(new_file_name))
 
 
-def main():
+
+# ====== ====== ======
+
+def main() -> None:
     print("API User: {}".format(api.me().screen_name))
     print("Menu\n\
         0: list -> csv\n\
@@ -175,7 +198,6 @@ def main():
         screen_name = input("Screen name:")
         list_id = get_list_id(screen_name)
         print("List ID:" + list_id)
-
 
 
 if __name__ == '__main__':
