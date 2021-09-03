@@ -99,7 +99,7 @@ def make_csv_from_list(screen_name: str, mode: int) -> None:
         list_to_csv(list_id)
 
 
-def make_list_from_csv(list_id: int, file_name: str):
+def make_list_from_csv(list_id: int, file_name: str) -> None:
     """ CSVファイルを読み込んでリストを作成する
 
     Args:
