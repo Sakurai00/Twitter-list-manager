@@ -173,6 +173,8 @@ def main() -> None:
         5: list up Lists")
     menu_id = int(input("Menu ID:"))
 
+    screen_name = api.me().screen_name
+
     if menu_id == 0:
         screen_name = input("Screen name:")
         mode = int(input("Mode (0:All, 1:Single):"))
