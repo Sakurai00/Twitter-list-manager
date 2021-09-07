@@ -1,4 +1,5 @@
 import itertools
+import os
 
 import pandas as pd
 import tweepy
@@ -163,6 +164,9 @@ def diff_of_csv(file_name1: str, file_name2: str) -> None:
 # ====== ====== ======
 
 def main() -> None:
+    if not os.path.exists(st.save_path):
+        os.makedirs(st.save_path)
+
     print("API User: {}".format(api.me().screen_name))
     print("Menu\n\
         0: list -> csv\n\
