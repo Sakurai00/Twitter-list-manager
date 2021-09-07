@@ -1,1 +1,1 @@
-save_path = "./output/"
+SAVE_PATH = "./output/"

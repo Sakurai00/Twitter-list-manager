@@ -67,7 +67,8 @@ def list_to_csv(list_id: int) -> None:
     """
 
     l = api.get_list(list_id = list_id)
-    file_name = '{}_{}.csv'.format(l.user.screen_name, l.name)
+    
+    file_name = os.path.join(st.SAVE_PATH, '{}_{}.csv'.format(l.user.screen_name, l.name))
 
     user_list = [["id", "name", "screen_name", "friends", "followers", "url", "description"]]
 
@@ -125,7 +126,7 @@ def make_csv_from_follow(screen_name: str, mode: int) -> None:
         mode (int): 0: Simple, 1: All
     """
 
-    file_name = '{}_follow.csv'.format(screen_name)
+    file_name = os.path.join(st.SAVE_PATH, '{}_follow.csv'.format(screen_name))
     id_list = []
 
     for member in tweepy.Cursor(api.friends_ids, screen_name = screen_name).items():
@@ -151,7 +152,8 @@ def diff_of_csv(file_name1: str, file_name2: str) -> None:
         file_name2 (str): CSV file name (compare)
     """
 
-    new_file_name = '{}_{}.csv'.format(file_name1[:-4], file_name2[:-4])
+    new_file_name = os.path.join(st.SAVE_PATH, '{}_{}.csv'.format(file_name1[:-4], file_name2[:-4]))
+    
     df1 = pd.read_csv(file_name1, encoding = "UTF-8", header = 0)
     df2 = pd.read_csv(file_name2, encoding = "UTF-8", header = 0)
     df3 = df1[~df1.id.isin(df2.id)]
@@ -164,8 +166,8 @@ def diff_of_csv(file_name1: str, file_name2: str) -> None:
 # ====== ====== ======
 
 def main() -> None:
-    if not os.path.exists(st.save_path):
-        os.makedirs(st.save_path)
+    if not os.path.exists(st.SAVE_PATH):
+        os.makedirs(st.SAVE_PATH)
 
     print("API User: {}".format(api.me().screen_name))
     print("Menu\n\
