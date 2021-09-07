@@ -4,6 +4,7 @@ import pandas as pd
 import tweepy
 
 from twapi import generate_api
+import settings as st
 
 api = generate_api()
 
