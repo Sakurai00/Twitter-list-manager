@@ -64,9 +64,8 @@ def list_to_csv(list_id: int) -> None:
         list_id (int): List ID
     """
 
-    name = api.get_list(list_id = list_id).full_name.split('/')
-    file_name = '{}_{}.csv'.format(name[0], name[1])
-
+    l = api.get_list(list_id = list_id)
+    file_name = '{}_{}.csv'.format(l.user.screen_name, l.name)
 
     user_list = [["id", "name", "screen_name", "friends", "followers", "url", "description"]]
 
