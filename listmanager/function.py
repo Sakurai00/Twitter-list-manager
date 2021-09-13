@@ -3,17 +3,16 @@ import os
 
 import pandas as pd
 import tweepy
+from tweepy.api import API
 
-from twapi import generate_api
-import settings as st
-
-api = generate_api()
+import listmanager.settings as st
 
 
-def get_list_id(screen_name: str) -> int:
+def get_list_id(api: API, screen_name: str) -> int:
     """ あるユーザのリストを列挙し，指定したリストIDを返す
 
     Args:
+        api (API): Twitter API
         screen_name (str): Screen_name
 
     Returns:
@@ -27,10 +26,11 @@ def get_list_id(screen_name: str) -> int:
     return id
 
 
-def create_list(list_name: str, mode: str) -> int:
+def create_list(api: API, list_name: str, mode: str) -> int:
     """ リストを作成する
 
     Args:
+        api (API): Twitter API
         list_name (str): List name
         mode (str): "pubric", "private"
 
@@ -42,10 +42,11 @@ def create_list(list_name: str, mode: str) -> int:
     return l.id
 
 
-def user_lookup(id_list: list) -> list:
+def user_lookup(api: API, id_list: list) -> list:
     """ ユーザIDを元にユーザの情報を取得する
 
     Args:
+        api (API): Twitter API
         id_list (list): User ID list
 
     Returns:
@@ -59,10 +60,11 @@ def user_lookup(id_list: list) -> list:
     return user_list
 
 
-def list_to_csv(list_id: int) -> None:
+def list_to_csv(api: API, list_id: int) -> None:
     """ 指定されたリストIDのメンバをCSVファイルに出力する
 
     Args:
+        api (API): Twitter API
         list_id (int): List ID
     """
 
@@ -84,10 +86,11 @@ def list_to_csv(list_id: int) -> None:
 
 # ====== ====== ======
 
-def make_csv_from_list(screen_name: str, mode: int) -> None:
+def make_csv_from_list(api: API, screen_name: str, mode: int) -> None:
     """ リストのメンバをCSVファイルに出力する
 
     Args:
+        api (API): Twitter API
         screen_name (str): Screen name
         mode (int): 0: All, 1: Single
     """
@@ -95,16 +98,17 @@ def make_csv_from_list(screen_name: str, mode: int) -> None:
     if mode == 0:
         lists = api.lists_all(screen_name = screen_name)
         for l in lists:
-            list_to_csv(l.id)
+            list_to_csv(api, l.id)
     elif mode == 1:
-        list_id = get_list_id(screen_name)
-        list_to_csv(list_id)
+        list_id = get_list_id(api, screen_name)
+        list_to_csv(api, list_id)
 
 
-def make_list_from_csv(list_id: int, file_name: str) -> None:
+def make_list_from_csv(api: API, list_id: int, file_name: str) -> None:
     """ CSVファイルを読み込んでリストを作成する
 
     Args:
+        api (API): Twitter API
         list_id (int): List ID
         file_name (str): CSV file name
     """
@@ -118,10 +122,11 @@ def make_list_from_csv(list_id: int, file_name: str) -> None:
     print("{} OK".format(file_name))
 
 
-def make_csv_from_follow(screen_name: str, mode: int) -> None:
+def make_csv_from_follow(api: API, screen_name: str, mode: int) -> None:
     """ フォローしているユーザをCSVファイルに出力する
 
     Args:
+        api (API): Twitter API
         screen_name (str): Screen name
         mode (int): 0: Simple, 1: All
     """
@@ -153,60 +158,10 @@ def diff_of_csv(file_name1: str, file_name2: str) -> None:
     """
 
     new_file_name = os.path.join(st.SAVE_PATH, '{}_{}.csv'.format(file_name1[:-4], file_name2[:-4]))
-    
+
     df1 = pd.read_csv(file_name1, encoding = "UTF-8", header = 0)
     df2 = pd.read_csv(file_name2, encoding = "UTF-8", header = 0)
     df3 = df1[~df1.id.isin(df2.id)]
     df3.to_csv(new_file_name, header = False, index = False, encoding = "UTF-8")
 
     print("{} is created.".format(new_file_name))
-
-
-
-# ====== ====== ======
-
-def main() -> None:
-    if not os.path.exists(st.SAVE_PATH):
-        os.makedirs(st.SAVE_PATH)
-
-    print("API User: {}".format(api.me().screen_name))
-    print("Menu\n\
-        0: list -> csv\n\
-        1: csv -> list\n\
-        2: follow -> csv\n\
-        3: diff of csv\n\
-        4: create list\n\
-        5: list up Lists")
-    menu_id = int(input("Menu ID:"))
-
-    screen_name = api.me().screen_name
-
-    if menu_id == 0:
-        screen_name = input("Screen name:")
-        mode = int(input("Mode (0:All, 1:Single):"))
-        make_csv_from_list(screen_name, mode)
-    elif menu_id == 1:
-        list_id = input("List ID:")
-        file_name = input("CSV file name:")
-        make_list_from_csv(list_id, file_name)
-    elif menu_id == 2:
-        screen_name = input("Screen name:")
-        mode = int(input("Mode (0:Simple, 1:More info):"))
-        make_csv_from_follow(screen_name, mode)
-    elif menu_id == 3:
-        file_name1 = input("File name 1:")
-        file_name2 = input("File name 2:")
-        diff_of_csv(file_name1, file_name2)
-    elif menu_id == 4:
-        list_name = input("List name:")
-        mode = input("Mode(public or private):")
-        list_id = create_list(list_name, mode)
-        print("List ID: {}".format(list_id))
-    elif menu_id == 5:
-        screen_name = input("Screen name:")
-        list_id = get_list_id(screen_name)
-        print("List ID: {}".format(list_id))
-
-
-if __name__ == '__main__':
-    main()
