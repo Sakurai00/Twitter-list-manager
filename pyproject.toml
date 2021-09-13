@@ -1,8 +1,9 @@
 [tool.poetry]
 name = "twitter-list-manager"
-version = "0.1.0"
+version = "1.0.0"
 description = ""
 authors = ["Sakurai <K.Sakurai_2000@outlook.com>"]
+license = "MIT"
 
 [tool.poetry.dependencies]
 python = "3.9.6"
