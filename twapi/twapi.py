@@ -12,9 +12,9 @@ from dotenv import load_dotenv
   TW_ACC_TOKEN_SEC=<access token_secret>
 """
 
+
 def create_token():
-    """ Twitter APIのアクセストークンを生成し，.envに保存する
-    """
+    """Twitter APIのアクセストークンを生成し，.envに保存する"""
 
     load_dotenv()
 
@@ -26,7 +26,7 @@ def create_token():
     try:
         redirect_url = auth.get_authorization_url()
     except tweepy.TweepError:
-        print('Error! Failed to get request token.')
+        print("Error! Failed to get request token.")
 
     print(redirect_url)
     webbrowser.open(redirect_url)
@@ -36,15 +36,15 @@ def create_token():
     try:
         auth.get_access_token(verifier)
     except tweepy.TweepError:
-        print('Error! Failed to get access token.')
+        print("Error! Failed to get access token.")
 
-    with open('.env', 'a') as f:
+    with open(".env", "a") as f:
         f.write("\n" + "TW_ACC_TOKEN=" + str(auth.access_token) + "\n")
         f.write("TW_ACC_TOKEN_SEC=" + str(auth.access_token_secret))
 
 
 def generate_api():
-    """ Twitter APIを生成
+    """Twitter APIを生成
 
     Returns:
         API: Twitter API
