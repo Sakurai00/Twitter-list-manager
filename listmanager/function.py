@@ -26,22 +26,6 @@ def get_list_id(api: API, screen_name: str) -> int:
     return id
 
 
-def create_list(api: API, list_name: str, mode: str) -> int:
-    """ リストを作成する
-
-    Args:
-        api (API): Twitter API
-        list_name (str): List name
-        mode (str): "pubric", "private"
-
-    Returns:
-        int: List ID
-    """
-
-    l = api.create_list(name = list_name, mode = mode)
-    return l.id
-
-
 def user_lookup(api: API, id_list: list) -> list:
     """ ユーザIDを元にユーザの情報を取得する
 
@@ -69,7 +53,7 @@ def list_to_csv(api: API, list_id: int) -> None:
     """
 
     l = api.get_list(list_id = list_id)
-    
+
     file_name = os.path.join(st.SAVE_PATH, '{}_{}.csv'.format(l.user.screen_name, l.name))
 
     user_list = [["id", "name", "screen_name", "friends", "followers", "url", "description"]]

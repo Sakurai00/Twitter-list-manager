@@ -45,7 +45,7 @@ def main() -> None:
     elif menu_id == 4:
         list_name = input("List name:")
         mode = input("Mode(public or private):")
-        list_id = create_list(api, list_name, mode)
+        list_id = api.create_list(name = list_name, mode = mode).id
         print("List ID: {}".format(list_id))
 
     elif menu_id == 5:
