@@ -1,3 +1,3 @@
-import listmanager.scripts
+import listmanager.listmanager
 
-listmanager.scripts.main()
+listmanager.listmanager.main()
