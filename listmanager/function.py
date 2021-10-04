@@ -19,7 +19,7 @@ def get_list_id(api: API, screen_name: str) -> int:
         int: List ID
     """
 
-    lists = api.lists_all(screen_name=screen_name)
+    lists = api.get_lists(screen_name=screen_name)
     for list in lists:
         print(list.id, list.name)
     id = int(input("List ID:"))
@@ -74,7 +74,7 @@ def list_to_csv(api: API, list_id: int) -> None:
         ["id", "name", "screen_name", "friends", "followers", "url", "description"]
     ]
 
-    for user in tweepy.Cursor(api.list_members, list_id=list_id).items():
+    for user in tweepy.Cursor(api.get_list_members, list_id=list_id).items():
         user_list.append(
             [
                 user.id,
@@ -106,7 +106,7 @@ def make_csv_from_list(api: API, screen_name: str, mode: int) -> None:
     """
 
     if mode == 0:
-        lists = api.lists_all(screen_name=screen_name)
+        lists = api.get_lists(screen_name=screen_name)
         for list in lists:
             list_to_csv(api, list.id)
     elif mode == 1:
@@ -144,7 +144,7 @@ def make_csv_from_follow(api: API, screen_name: str, mode: int) -> None:
     file_name = os.path.join(st.SAVE_PATH, "{}_follow.csv".format(screen_name))
     id_list = []
 
-    for member in tweepy.Cursor(api.friends_ids, screen_name=screen_name).items():
+    for member in tweepy.Cursor(api.get_friend_ids, screen_name=screen_name).items():
         id_list.append(member)
 
     if mode == 0:
@@ -159,17 +159,16 @@ def make_csv_from_follow(api: API, screen_name: str, mode: int) -> None:
     print("{} is created.".format(file_name))
 
 
-def diff_of_csv(file_name1: str, file_name2: str) -> None:
+def diff_of_csv(file_name1: str, file_name2: str, new_file_name: str) -> None:
     """与えられたCSVファイル1と2の差分を出力する
 
     Args:
         file_name1 (str): CSV file name (base)
         file_name2 (str): CSV file name (compare)
+        new_file_name (str): new CSV file name
     """
 
-    new_file_name = os.path.join(
-        st.SAVE_PATH, "{}_{}.csv".format(file_name1[:-4], file_name2[:-4])
-    )
+    new_file_name = os.path.join(st.SAVE_PATH, new_file_name)
 
     df1 = pd.read_csv(file_name1, encoding="UTF-8", header=0)
     df2 = pd.read_csv(file_name2, encoding="UTF-8", header=0)
