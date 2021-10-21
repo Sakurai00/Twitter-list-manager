@@ -87,10 +87,37 @@ def list_to_csv(api: API, list_id: int) -> None:
             ]
         )
 
-    df = pd.DataFrame(user_list)
-    df.to_csv(file_name, header=False, index=False, encoding="UTF-8")
+    make_csv(user_list, file_name)
 
-    print("{} is created.".format(file_name))
+
+def block_list_to_csv(api: API, screen_name: str) -> None:
+    """ブロックしているユーザをCSVファイルに出力する
+
+    Args:
+        api (API): Twitter API
+        screen_name (str): Screen name
+    """
+
+    file_name = os.path.join(st.SAVE_PATH, "{}_block.csv".format(screen_name))
+
+    user_list = [
+        ["id", "name", "screen_name", "friends", "followers", "url", "description"]
+    ]
+
+    for user in tweepy.Cursor(api.get_blocks, screen_name=screen_name).items():
+        user_list.append(
+            [
+                user.id,
+                user.name,
+                user.screen_name,
+                user.friends_count,
+                user.followers_count,
+                user.url,
+                user.description,
+            ]
+        )
+
+    make_csv(user_list, file_name)
 
 
 # ====== ====== ======
@@ -176,3 +203,30 @@ def diff_of_csv(file_name1: str, file_name2: str, new_file_name: str) -> None:
     df3.to_csv(new_file_name, header=False, index=False, encoding="UTF-8")
 
     print("{} is created.".format(new_file_name))
+
+
+def make_csv(list: list, file_name: str) -> None:
+    """CSVファイルを作成する
+
+    Args:
+        list (list): List
+        file_name (str): CSV file name
+    """
+
+    df = pd.DataFrame(list)
+    df.to_csv(file_name, header=False, index=False, encoding="UTF-8")
+
+    print("{} is created.".format(file_name))
+
+
+def set_screen_name(api: API) -> str:
+    """Screen nameを入力する
+
+    Returns:
+        str: Screen name
+    """
+
+    screen_name = input("Screen name:")
+    if not screen_name:
+        screen_name = api.verify_credentials().screen_name
+    return screen_name
