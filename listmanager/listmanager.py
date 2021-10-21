@@ -4,6 +4,7 @@ from twapi.twapi import generate_api_v1, generate_api_v2
 
 import listmanager.settings as st
 from listmanager.function import (
+    block_list_to_csv,
     make_csv_from_list,
     make_list_from_csv,
     make_csv_from_follow,
@@ -28,7 +29,8 @@ def main() -> None:
         2: follow -> csv\n\
         3: diff of csv\n\
         4: create list\n\
-        5: list up Lists"
+        5: list up Lists\n\
+        6: block user -> csv"
     )
     menu_id = int(input("Menu ID:"))
 
@@ -62,3 +64,5 @@ def main() -> None:
         screen_name = set_screen_name(api)
         list_id = get_list_id(api, screen_name)
         print("List ID: {}".format(list_id))
+    elif menu_id == 6:
+        block_list_to_csv(api)
