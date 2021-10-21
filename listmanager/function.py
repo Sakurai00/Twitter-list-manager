@@ -90,21 +90,21 @@ def list_to_csv(api: API, list_id: int) -> None:
     make_csv(user_list, file_name)
 
 
-def block_list_to_csv(api: API, screen_name: str) -> None:
+def block_list_to_csv(api: API) -> None:
     """ブロックしているユーザをCSVファイルに出力する
 
     Args:
         api (API): Twitter API
-        screen_name (str): Screen name
     """
 
+    screen_name = api.verify_credentials().screen_name
     file_name = os.path.join(st.SAVE_PATH, "{}_block.csv".format(screen_name))
 
     user_list = [
         ["id", "name", "screen_name", "friends", "followers", "url", "description"]
     ]
 
-    for user in tweepy.Cursor(api.get_blocks, screen_name=screen_name).items():
+    for user in tweepy.Cursor(api.get_blocks).items():
         user_list.append(
             [
                 user.id,
