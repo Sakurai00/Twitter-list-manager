@@ -220,7 +220,7 @@ def make_csv(list: list, file_name: str) -> None:
 
 
 def set_screen_name(api: API) -> str:
-    """Screen nameを入力する
+    """Screen nameを入力する.ブランクの場合，APIの保持者を返す．
 
     Returns:
         str: Screen name
