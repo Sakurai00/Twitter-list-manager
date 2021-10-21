@@ -1,6 +1,6 @@
 import os
 
-from twapi.twapi import generate_api
+from twapi.twapi import generate_api_v1, generate_api_v2
 
 import listmanager.settings as st
 from listmanager.function import (
@@ -14,7 +14,9 @@ from listmanager.function import (
 
 
 def main() -> None:
-    api = generate_api()
+    api = generate_api_v1()
+    client = generate_api_v2()
+
     if not os.path.exists(st.SAVE_PATH):
         os.makedirs(st.SAVE_PATH)
 
@@ -42,6 +44,7 @@ def main() -> None:
 
     elif menu_id == 2:
         screen_name = set_screen_name(api)
+        make_csv_from_follow(client, screen_name)
 
     elif menu_id == 3:
         file_name1 = input("File name 1:")
