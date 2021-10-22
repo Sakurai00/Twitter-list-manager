@@ -19,6 +19,7 @@ def get_list_id(api: API, screen_name: str) -> int:
         int: List ID
     """
 
+    # API v2未実装．
     lists = api.get_lists(screen_name=screen_name)
     for list in lists:
         print(list.id, list.name)
@@ -44,7 +45,9 @@ def list_to_csv(api: API, list_id: int) -> None:
         ["id", "name", "screen_name", "friends", "followers", "url", "description"]
     ]
 
+    # API v2未実装．
     for user in tweepy.Cursor(api.get_list_members, list_id=list_id).items():
+        user_url = get_expanded_url(user)
         user_list.append(
             [
                 user.id,
@@ -52,7 +55,7 @@ def list_to_csv(api: API, list_id: int) -> None:
                 user.screen_name,
                 user.friends_count,
                 user.followers_count,
-                user.url,
+                user_url,
                 user.description,
             ]
         )
@@ -91,17 +94,17 @@ def block_to_csv(api: API, client: tweepy.Client) -> None:
         users = response.data
         for user in users:
             user_url = get_expanded_url(user)
-        user_list.append(
-            [
-                user.id,
-                user.name,
+            user_list.append(
+                [
+                    user.id,
+                    user.name,
                     user.username,
                     user.public_metrics["following_count"],
                     user.public_metrics["followers_count"],
                     user_url,
-                user.description,
-            ]
-        )
+                    user.description,
+                ]
+            )
 
     make_csv(user_list, file_name)
 
@@ -140,6 +143,7 @@ def make_list_from_csv(api: API, list_id: int, file_name: str) -> None:
     for chunk in df:
         id_list = chunk.to_numpy().tolist()
         id_list = list(itertools.chain.from_iterable(id_list))
+        # API v2未実装．一人ずつ追加はできるが，レートリミット．
         api.add_list_members(list_id=list_id, user_id=id_list)
 
     print("{} OK".format(file_name))
