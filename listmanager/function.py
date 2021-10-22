@@ -63,6 +63,54 @@ def list_to_csv(api: API, list_id: int) -> None:
     make_csv(user_list, file_name)
 
 
+def follow_to_csv(client: tweepy.Client, username: str) -> None:
+    """フォローしているユーザをCSVファイルに出力する
+
+    Args:
+        client (tweepy.Client): Twitter API v2
+        username (str): Screen name
+    """
+
+    file_name = os.path.join(st.SAVE_PATH, "{}_follow.csv".format(username))
+    user_list = [
+        [
+            "id",
+            "name",
+            "username",
+            "following_count",
+            "followers_count",
+            "url",
+            "description",
+        ]
+    ]
+
+    user_id = client.get_user(username=username, user_auth=True).data["id"]
+
+    for response in tweepy.Paginator(
+        client.get_users_following,
+        id=user_id,
+        user_auth=True,
+        max_results=1000,
+        user_fields=["id,name,username,public_metrics,url,description,entities"],
+    ):
+        users = response.data
+        for user in users:
+            user_url = get_expanded_url(user)
+            user_list.append(
+                [
+                    user.id,
+                    user.name,
+                    user.username,
+                    user.public_metrics["following_count"],
+                    user.public_metrics["followers_count"],
+                    user_url,
+                    user.description,
+                ]
+            )
+
+    make_csv(user_list, file_name)
+
+
 def block_to_csv(api: API, client: tweepy.Client) -> None:
     """ブロックしているユーザをCSVファイルに出力する
 
@@ -122,6 +170,7 @@ def make_csv_from_list(api: API, screen_name: str, mode: int) -> None:
     """
 
     if mode == 0:
+        # API v2未実装．
         lists = api.get_lists(screen_name=screen_name)
         for list in lists:
             list_to_csv(api, list.id)
@@ -147,54 +196,6 @@ def make_list_from_csv(api: API, list_id: int, file_name: str) -> None:
         api.add_list_members(list_id=list_id, user_id=id_list)
 
     print("{} OK".format(file_name))
-
-
-def follow_to_csv(client: tweepy.Client, username: str) -> None:
-    """フォローしているユーザをCSVファイルに出力する
-
-    Args:
-        client (tweepy.Client): Twitter API v2
-        username (str): Screen name
-    """
-
-    file_name = os.path.join(st.SAVE_PATH, "{}_follow.csv".format(username))
-    user_list = [
-        [
-            "id",
-            "name",
-            "username",
-            "following_count",
-            "followers_count",
-            "url",
-            "description",
-        ]
-    ]
-
-    user_id = client.get_user(username=username, user_auth=True).data["id"]
-
-    for response in tweepy.Paginator(
-        client.get_users_following,
-        id=user_id,
-        user_auth=True,
-        max_results=1000,
-        user_fields=["id,name,username,public_metrics,url,description,entities"],
-    ):
-        users = response.data
-        for user in users:
-            user_url = get_expanded_url(user)
-            user_list.append(
-                [
-                    user.id,
-                    user.name,
-                    user.username,
-                    user.public_metrics["following_count"],
-                    user.public_metrics["followers_count"],
-                    user_url,
-                    user.description,
-                ]
-            )
-
-    make_csv(user_list, file_name)
 
 
 def diff_of_csv(file_name1: str, file_name2: str, new_file_name: str) -> None:
