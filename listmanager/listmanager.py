@@ -1,20 +1,23 @@
 import os
 
-from twapi.twapi import generate_api
+from twapi.twapi import generate_api_v1, generate_api_v2
 
 import listmanager.settings as st
 from listmanager.function import (
-    block_list_to_csv,
+    block_to_csv,
     make_csv_from_list,
     make_list_from_csv,
-    make_csv_from_follow,
+    follow_to_csv,
     diff_of_csv,
     get_list_id,
+    set_screen_name,
 )
 
 
 def main() -> None:
-    api = generate_api()
+    api = generate_api_v1()
+    client = generate_api_v2()
+
     if not os.path.exists(st.SAVE_PATH):
         os.makedirs(st.SAVE_PATH)
 
@@ -32,9 +35,7 @@ def main() -> None:
     menu_id = int(input("Menu ID:"))
 
     if menu_id == 0:
-        screen_name = input("Screen name:")
-        if not screen_name:
-            screen_name = api.verify_credentials().screen_name
+        screen_name = set_screen_name(api)
         mode = int(input("Mode (0:All, 1:Single):"))
         make_csv_from_list(api, screen_name, mode)
 
@@ -44,11 +45,8 @@ def main() -> None:
         make_list_from_csv(api, list_id, file_name)
 
     elif menu_id == 2:
-        screen_name = input("Screen name:")
-        if not screen_name:
-            screen_name = api.verify_credentials().screen_name
-        mode = int(input("Mode (0:Simple, 1:More info):"))
-        make_csv_from_follow(api, screen_name, mode)
+        username = set_screen_name(api)
+        follow_to_csv(client, username)
 
     elif menu_id == 3:
         file_name1 = input("File name 1:")
@@ -59,14 +57,13 @@ def main() -> None:
     elif menu_id == 4:
         list_name = input("List name:")
         mode = input("Mode(public or private):")
+        # API v2は存在するが，tweepy非対応．
         list_id = api.create_list(name=list_name, mode=mode).id
         print("List ID: {}".format(list_id))
 
     elif menu_id == 5:
-        screen_name = input("Screen name:")
-        if not screen_name:
-            screen_name = api.verify_credentials().screen_name
+        screen_name = set_screen_name(api)
         list_id = get_list_id(api, screen_name)
         print("List ID: {}".format(list_id))
     elif menu_id == 6:
-        block_list_to_csv(api)
+        block_to_csv(api, client)
