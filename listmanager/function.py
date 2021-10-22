@@ -129,15 +129,15 @@ def make_list_from_csv(api: API, list_id: int, file_name: str) -> None:
     print("{} OK".format(file_name))
 
 
-def make_csv_from_follow(client: tweepy.Client, screen_name: str) -> None:
+def follow_to_csv(client: tweepy.Client, username: str) -> None:
     """フォローしているユーザをCSVファイルに出力する
 
     Args:
         client (tweepy.Client): Twitter API v2
-        screen_name (str): Screen name
+        username (str): Screen name
     """
 
-    file_name = os.path.join(st.SAVE_PATH, "{}_follow.csv".format(screen_name))
+    file_name = os.path.join(st.SAVE_PATH, "{}_follow.csv".format(username))
     user_list = [
         [
             "id",
@@ -150,11 +150,11 @@ def make_csv_from_follow(client: tweepy.Client, screen_name: str) -> None:
         ]
     ]
 
-    id = client.get_user(username=screen_name, user_auth=True).data["id"]
+    user_id = client.get_user(username=username, user_auth=True).data["id"]
 
     for response in tweepy.Paginator(
         client.get_users_following,
-        id=id,
+        id=user_id,
         user_auth=True,
         max_results=1000,
         user_fields=["id,name,username,public_metrics,url,description,entities"],

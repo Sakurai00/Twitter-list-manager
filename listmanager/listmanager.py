@@ -7,7 +7,7 @@ from listmanager.function import (
     block_list_to_csv,
     make_csv_from_list,
     make_list_from_csv,
-    make_csv_from_follow,
+    follow_to_csv,
     diff_of_csv,
     get_list_id,
     set_screen_name,
@@ -45,8 +45,8 @@ def main() -> None:
         make_list_from_csv(api, list_id, file_name)
 
     elif menu_id == 2:
-        screen_name = set_screen_name(api)
-        make_csv_from_follow(client, screen_name)
+        username = set_screen_name(api)
+        follow_to_csv(client, username)
 
     elif menu_id == 3:
         file_name1 = input("File name 1:")
