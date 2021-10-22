@@ -57,6 +57,7 @@ def main() -> None:
     elif menu_id == 4:
         list_name = input("List name:")
         mode = input("Mode(public or private):")
+        # API v2は存在するが，tweepy非対応．
         list_id = api.create_list(name=list_name, mode=mode).id
         print("List ID: {}".format(list_id))
 
